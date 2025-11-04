@@ -1,0 +1,42 @@
+services:
+  vote:
+    image: roxs-voting-app-worker:latest
+    networks:
+      - app_net
+      - proxy_publica
+    restart: always
+
+  worker:
+    image: roxs-voting-app-worker:latest
+    restart: always
+
+  result:
+    image: roxs-voting-app-result:latest
+    networks:
+      - app_net
+      - proxy_publica
+    restart: always
+    
+  redis:
+    image: redis:alpine
+    networks:
+      - app_net
+    volumes:
+      - prod_redis_data:/data
+    restart: always
+
+  postgres:
+    image: postgres:15-alpine
+    networks:
+      - app_net
+    volumes:
+      - prod_postgres_data:/var/lib/postgresql/data
+    restart: always
+
+networks:
+  proxy_publica:
+    external: true
+
+volumes:
+  prod_postgres_data:
+  prod_redis_data:

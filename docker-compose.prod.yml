@@ -1,0 +1,42 @@
+services:
+  vote:
+    image: rojasvictor/vote:1.0.0
+    networks:
+      - app_net
+      - proxy_publica
+    restart: always
+
+  worker:
+    image: rojasvictor/worker:1.0.0
+    restart: always
+
+  result:
+    image: rojasvictor/result:1.0.0
+    networks:
+      - app_net
+      - proxy_publica
+    restart: always
+    
+  redis:
+    image: redis:alpine
+    networks:
+      - app_net
+    volumes:
+      - prod_redis_data:/data
+    restart: always
+
+  postgres:
+    image: postgres:15-alpine
+    networks:
+      - app_net
+    volumes:
+      - prod_postgres_data:/var/lib/postgresql/data
+    restart: always
+
+networks:
+  proxy_publica:
+    external: true
+
+volumes:
+  prod_postgres_data:
+  prod_redis_data:
