@@ -109,19 +109,19 @@ jobs:
         with:
           context: ./vote
           push: true
-          tags: ${{ env.REGISTRY }}/${{ github.actor }}/vote:latest
+          tags: ${{ env.REGISTRY }}/vicrounix/vote:latest
 
       - name: Build and push worker app
         uses: docker/build-push-action@v6
         with:
           context: ./worker
           push: true
-          tags: ${{ env.REGISTRY }}/${{ github.actor }}/worker:latest
+          tags: ${{ env.REGISTRY }}/vicrounix/worker:latest
 
       - name: Build and push result app
         uses: docker/build-push-action@v6
         with:
           context: ./result
           push: true
-          tags: ${{ env.REGISTRY }}/${{ github.actor }}/result:latest
+          tags: ${{ env.REGISTRY }}/vicrounix/result:latest
     
