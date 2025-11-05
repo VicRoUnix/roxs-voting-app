@@ -1,0 +1,57 @@
+name: Deploy Staging
+
+on:
+  workflow_run:
+    workflows: ["CI implementacion App"]
+    types:
+      - completed
+    branches:
+      - main
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success'}}
+    runs-on: self-hosted
+
+    enviroment:
+      name: staging
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login in Github Container
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN}}
+      
+      - name: Crear archivo .env.staging  
+        run: echo "${{ secrets.STAGING_ENV_FILE }}" > .env.staging
+
+      - name: Desplegar aplicacion en Staging
+        run: |
+          docker compose --env-file .env.staging -f docker-compose.yml -f docker-compose.staging.yml up -d --wait
+
+      - name: Ejecutar Smokes test
+        run: |
+          echo "Esperando que las aplicaciones se levanten"
+          sleep 10
+
+          echo "Probando endpoint de 'vote'..."
+          curl --fail http://localhost:80
+
+          echo "Probando endponint de 'result'..."
+          curl --fail http://localhost:3000
+
+      - name: Limpiar imagenes antiguas
+        if: always()
+        run: docker image prune -f
