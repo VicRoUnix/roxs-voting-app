@@ -8,7 +8,7 @@ jobs:
   backup-database:
     runs-on: self-hosted
 
-    enviroment:
+    environment:
       name: production
     
     permission:
@@ -52,7 +52,7 @@ jobs:
   deployment:
     runs-on: self-hosted
     
-    enviroment:
+    environment:
       name: production
     
     permission:
